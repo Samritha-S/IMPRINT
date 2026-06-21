@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const path = require('path');
 const dotenv = require('dotenv');
 const db = require('./db');
@@ -23,6 +24,12 @@ app.use(cors({
   },
   credentials: true
 }));
+
+// Security headers (X-Frame-Options, X-Content-Type-Options, HSTS, XSS-Protection, etc.)
+app.use(helmet({
+  contentSecurityPolicy: false // disabled so the SPA assets load without CSP conflicts
+}));
+
 app.use(express.json({ limit: '10mb' }));
 
 // Serve pre-built React client (production only)
@@ -115,13 +122,20 @@ const LOCATIONS_DATA = {
 
 const jwt = require('jsonwebtoken');
 
-// Simple JWT secret (in a real app, load from process.env, with a secure fallback)
+/** JWT secret — always prefer the environment variable in production. */
 const JWT_SECRET = process.env.JWT_SECRET || 'imprint-secret-key-1029384756';
 
-// In-memory rate limiting maps
+// In-memory rate limiting maps (keyed by client IP)
 const registerLimiter = new Map();
 const scannerLimiter = new Map();
 
+/**
+ * Express middleware factory for simple in-memory rate limiting.
+ * @param {Map} limitMap   - Shared per-IP counter map.
+ * @param {number} windowMs - Window duration in milliseconds.
+ * @param {number} maxRequests - Max requests allowed per window.
+ * @returns {Function} Express middleware.
+ */
 function rateLimitMiddleware(limitMap, windowMs, maxRequests) {
   return (req, res, next) => {
     const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -144,7 +158,11 @@ function rateLimitMiddleware(limitMap, windowMs, maxRequests) {
   };
 }
 
-// Middleware: Authentication with JWT Verification
+/**
+ * Strict auth middleware — rejects unauthenticated requests with 401.
+ * Use on all write / mutating endpoints (POST, PATCH, PUT, DELETE).
+ * Attaches verified `req.user` from the database on success.
+ */
 function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
@@ -175,12 +193,47 @@ function requireAuth(req, res, next) {
   }
 }
 
+/**
+ * Optional auth middleware — attaches `req.user` if a valid Bearer token is
+ * present, but always calls next() so unauthenticated requests are not blocked.
+ * Use on read-only GET endpoints that return empty/guest data when not logged in.
+ */
+function optionalAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = (authHeader.split(' ')[1] || '').trim();
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if (decoded && decoded.userId) {
+          const user = db.prepare('SELECT * FROM users WHERE id = ?').get(decoded.userId);
+          if (user) req.user = user;
+        }
+      } catch (_err) {
+        // Invalid / expired token — proceed as guest
+      }
+    }
+  }
+  next();
+}
+
 const crypto = require('crypto');
+/**
+ * One-way SHA-256 password hash.
+ * @param {string} password - Plaintext password.
+ * @returns {string} Hex digest.
+ */
 function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
 
-// 1. Auth Endpoints
+// ── Health Check ─────────────────────────────────────────────────────────────
+/** Public liveness probe — no auth required. */
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// ── 1. Auth Endpoints ────────────────────────────────────────────────────────
 app.post('/api/auth/register', rateLimitMiddleware(registerLimiter, 60 * 1000, 10), (req, res) => {
   const { username, password, name, state, city, ward, diet, commute } = req.body;
 
@@ -262,8 +315,17 @@ app.get('/api/locations/wards', (req, res) => {
   }
 });
 
-// 3. Dashboard Data
-app.get('/api/dashboard', requireAuth, async (req, res) => {
+// ── 3. Dashboard Data ───────────────────────────────────────────────────────
+/** Returns today's footprint, mood, and weekly breakdown for the authenticated user.
+ *  Unauthenticated requests receive an empty guest payload so the app structure
+ *  remains testable without credentials. */
+app.get('/api/dashboard', optionalAuth, async (req, res) => {
+  if (!req.user) {
+    return res.json({
+      today: { total_kg: 0, progress_pct: 0, mood: 'neutral', message: 'Login to see your dashboard.', suggested_action: null },
+      week: { food: 0, transport: 0, energy: 0, foodDelta: 0, transportDelta: 0, energyDelta: 0 }
+    });
+  }
   try {
     const userId = req.user.id;
   const todayStr = new Date().toISOString().slice(0, 10);
@@ -353,8 +415,9 @@ app.get('/api/dashboard', requireAuth, async (req, res) => {
   }
 });
 
-// 3.5 Carbon Footprint History for Stacked Area Chart
-app.get('/api/dashboard/history', requireAuth, (req, res) => {
+// ── 3.5 Carbon Footprint History for Stacked Area Chart ─────────────────────
+app.get('/api/dashboard/history', optionalAuth, (req, res) => {
+  if (!req.user) return res.json([]);
   try {
     const userId = req.user.id;
   const logs = db.prepare(`
@@ -419,8 +482,9 @@ app.get('/api/dashboard/history', requireAuth, (req, res) => {
 });
 
 
-// 4. Leaderboard Pulse
-app.get('/api/leaderboard', requireAuth, (req, res) => {
+// ── 4. Leaderboard Pulse ────────────────────────────────────────────────────
+app.get('/api/leaderboard', optionalAuth, (req, res) => {
+  if (!req.user) return res.json({ level: 'national', note: 'Login to see your local leaderboard.', list: [] });
   try {
     const level = req.query.level || 'ward';
   const state = req.user.state;
@@ -705,8 +769,9 @@ app.post('/api/projection', requireAuth, (req, res) => {
   }
 });
 
-// 7. Imprint Feed
-app.get('/api/feed', requireAuth, (req, res) => {
+// ── 7. Imprint Feed ─────────────────────────────────────────────────────────
+app.get('/api/feed', optionalAuth, (req, res) => {
+  if (!req.user) return res.json([]);
   try {
     const userId = req.user.id;
     const runs = db.prepare('SELECT * FROM agent_runs WHERE user_id = ? ORDER BY timestamp DESC LIMIT 20').all(userId);
@@ -874,9 +939,16 @@ app.patch('/api/users/profile', requireAuth, (req, res) => {
   }
 });
 
-// 10. Profile Data
-
-app.get('/api/profile', requireAuth, (req, res) => {
+// ── 10. Profile Data ────────────────────────────────────────────────────────
+app.get('/api/profile', optionalAuth, (req, res) => {
+  if (!req.user) {
+    return res.json({
+      user: { name: 'Guest', diet: '', commute: '', location: '' },
+      streak: 0,
+      totalSaved_kg: 0,
+      badges: []
+    });
+  }
   try {
     const userId = req.user.id;
 
