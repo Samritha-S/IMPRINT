@@ -26,30 +26,20 @@ const server = app.listen(5002, async () => {
   try {
     await runTests();
     console.log("✅ All integration tests passed successfully!");
-    try { db.close(); } catch(e) {}
-    try { fs.unlinkSync(testDbPath); } catch(e) {}
-    try { server.close(); } catch(e) {}
+    try { db.close(); } catch(errDb) { console.error('Failed to close test db:', errDb); }
+    try { fs.unlinkSync(testDbPath); } catch(errFs) { console.error('Failed to unlink test db:', errFs); }
+    try { server.close(); } catch(errSrv) { console.error('Failed to close test server:', errSrv); }
     process.exit(0);
   } catch (err) {
     console.error("❌ Integration tests failed!");
     console.error(err);
-    try { db.close(); } catch(e) {}
-    try { fs.unlinkSync(testDbPath); } catch(e) {}
+    try { db.close(); } catch(errDb) { console.error('Failed to close test db on failure:', errDb); }
+    try { fs.unlinkSync(testDbPath); } catch(errFs) { console.error('Failed to unlink test db on failure:', errFs); }
     process.exit(1);
   }
 });
 
-function cleanupAndExit(code) {
-  try {
-    db.close();
-  } catch (e) {}
-  if (fs.existsSync(testDbPath)) {
-    try {
-      fs.unlinkSync(testDbPath);
-    } catch (e) {}
-  }
-  process.exit(code);
-}
+
 
 async function runTests() {
   // 2. Register a mock user to get a valid authentication token

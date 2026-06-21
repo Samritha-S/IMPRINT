@@ -141,7 +141,7 @@ function runSeed() {
     const userIds = [demoUserId];
     for (let i = 0; i < 200; i++) {
       // Weight popular states higher
-      let state = 'Karnataka';
+      let state;
       const rand = Math.random();
       if (rand < 0.20) state = 'Karnataka';
       else if (rand < 0.40) state = 'Maharashtra';

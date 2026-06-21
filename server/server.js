@@ -113,25 +113,66 @@ const LOCATIONS_DATA = {
   }
 };
 
-// Middleware: Authentication
+const jwt = require('jsonwebtoken');
+
+// Simple JWT secret (in a real app, load from process.env, with a secure fallback)
+const JWT_SECRET = process.env.JWT_SECRET || 'imprint-secret-key-1029384756';
+
+// In-memory rate limiting maps
+const registerLimiter = new Map();
+const scannerLimiter = new Map();
+
+function rateLimitMiddleware(limitMap, windowMs, maxRequests) {
+  return (req, res, next) => {
+    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const now = Date.now();
+    const clientData = limitMap.get(ip) || { count: 0, resetTime: now + windowMs };
+
+    if (now > clientData.resetTime) {
+      clientData.count = 1;
+      clientData.resetTime = now + windowMs;
+    } else {
+      clientData.count += 1;
+    }
+
+    limitMap.set(ip, clientData);
+
+    if (clientData.count > maxRequests) {
+      return res.status(429).json({ error: 'Too many requests, please try again later.' });
+    }
+    next();
+  };
+}
+
+// Middleware: Authentication with JWT Verification
 function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).json({ error: 'Authorization header is missing' });
   }
 
-  const userId = authHeader.split(' ')[1];
-  if (!userId) {
+  const token = authHeader.split(' ')[1];
+  if (!token) {
     return res.status(401).json({ error: 'Token missing' });
   }
 
-  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
-  if (!user) {
-    return res.status(401).json({ error: 'Invalid user session' });
-  }
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (!decoded || !decoded.userId) {
+      return res.status(401).json({ error: 'Invalid token payload' });
+    }
 
-  req.user = user;
-  next();
+    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(decoded.userId);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid user session' });
+    }
+
+    req.user = user;
+    next();
+  } catch (err) {
+    console.error('requireAuth token verification failed:', err.message);
+    return res.status(401).json({ error: 'Invalid or expired session token' });
+  }
 }
 
 const crypto = require('crypto');
@@ -140,7 +181,7 @@ function hashPassword(password) {
 }
 
 // 1. Auth Endpoints
-app.post('/api/auth/register', (req, res) => {
+app.post('/api/auth/register', rateLimitMiddleware(registerLimiter, 60 * 1000, 10), (req, res) => {
   const { username, password, name, state, city, ward, diet, commute } = req.body;
 
   if (!username || !password || !name || !state || !city || !ward || !diet || !commute) {
@@ -159,7 +200,8 @@ app.post('/api/auth/register', (req, res) => {
     `).run(username, hashedPassword, name, state, city, ward, diet, commute);
 
     const user = db.prepare('SELECT * FROM users WHERE id = ?').get(info.lastInsertRowid);
-    res.json({ token: user.id.toString(), user });
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, user });
   } catch (err) {
     if (err.message.includes('UNIQUE')) {
       return res.status(400).json({ error: 'Username already taken' });
@@ -180,7 +222,8 @@ app.post('/api/auth/login', (req, res) => {
       return res.status(400).json({ error: 'Invalid username or password' });
     }
 
-    res.json({ token: user.id.toString(), user });
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, user });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -261,7 +304,9 @@ app.get('/api/dashboard', requireAuth, async (req, res) => {
         const feedback = db.prepare('SELECT accepted FROM agent_feedback WHERE user_id = ? AND action_id = ?').get(userId, latestRun.suggested_action.action_id);
         latestRun.suggested_action.status = feedback ? (feedback.accepted === 1 ? 'accepted' : 'dismissed') : 'pending';
       }
-    } catch(e) {}
+    } catch (errJson) {
+      console.warn('Failed to parse suggested action or retrieve feedback:', errJson);
+    }
   }
 
   // Week at a glance totals
@@ -468,7 +513,7 @@ app.get('/api/leaderboard', requireAuth, (req, res) => {
 });
 
 // 5. Scanners Hub Upload
-app.post('/api/scanner/upload', requireAuth, async (req, res) => {
+app.post('/api/scanner/upload', requireAuth, rateLimitMiddleware(scannerLimiter, 60 * 1000, 20), async (req, res) => {
   try {
     const userId = req.user.id;
     const { type, textContent, fileType, fileSize } = req.body; 
@@ -680,7 +725,9 @@ app.get('/api/feed', requireAuth, (req, res) => {
         if (action && action.action_id) {
           action.status = feedbackMap[action.action_id] || 'pending';
         }
-      } catch(e) {}
+      } catch (errFeed) {
+        console.warn('Failed to parse suggested action in feed:', errFeed);
+      }
 
       return {
         id: run.id,
@@ -862,8 +909,7 @@ app.get('/api/profile', requireAuth, (req, res) => {
   // Calculate sum of total emissions saved (accepted recommendations times 30 days)
   const feedbackList = db.prepare('SELECT action_id FROM agent_feedback WHERE user_id = ? AND accepted = 1').all(userId);
   let totalSaved = 0;
-  feedbackList.forEach(fb => {
-    const action = agentService.tools.suggestAction(userId); // retrieves sample or static lookup savings
+  feedbackList.forEach(_fb => {
     totalSaved += 30; // nominal 30kg savings per accepted action for gamification visual baseline
   });
 

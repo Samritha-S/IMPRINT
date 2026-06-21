@@ -45,7 +45,7 @@ export default function ScannerHub({ token }) {
     setScanResult(null);
     setShowManualForm(false);
     
-    let text = "";
+    let text;
 
     if (typeof fileOrText === 'string') {
       text = fileOrText;

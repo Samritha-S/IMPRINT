@@ -363,8 +363,8 @@ function runDeterministicLoop(userId) {
   trace.push(`Ran pattern detection. Found ${patternData.patterns.length} patterns.`);
 
   // Determine Pip's mood
-  let mood = 'neutral';
-  let message = '';
+  let mood;
+  let message;
   let focusCategory = 'energy';
 
   const spike = patternData.patterns.find(p => p.type === 'sudden_spike');
@@ -372,15 +372,20 @@ function runDeterministicLoop(userId) {
 
   if (summary.count === 0) {
     mood = 'neutral';
-    message = localMsgs.welcome;
-  } else if (summary.average > 10 || compare.percentage > 20 || spike) {
-    mood = 'concerned';
-  } else if (summary.average < 4 || compare.percentage < -10) {
-    mood = 'happy';
+  } else {
+    if (summary.average > 10 || compare.percentage > 20 || spike) {
+      mood = 'concerned';
+    } else if (summary.average < 4 || compare.percentage < -10) {
+      mood = 'happy';
+    } else {
+      mood = 'neutral';
+    }
   }
 
   // Construct Pip's message
-  if (mood === 'concerned') {
+  if (summary.count === 0) {
+    message = localMsgs.welcome;
+  } else if (mood === 'concerned') {
     if (spike) {
       const pct = Math.round((spike.data.last7Avg / spike.data.prior7Avg - 1) * 100);
       message = localMsgs.spike(localMsgs.spike_pattern(pct));

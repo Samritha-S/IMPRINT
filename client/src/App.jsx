@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import Onboarding from './components/Onboarding';
-import Dashboard from './components/Dashboard';
-import ScannerHub from './components/ScannerHub';
-import ProjectionEngine from './components/ProjectionEngine';
 import Feed from './components/Feed';
 import Profile from './components/Profile';
 import PipMascot from './components/PipMascot';
 import { LayoutDashboard, Camera, LineChart, FileText, User as UserIcon, LogOut, Leaf, Edit3, Settings } from 'lucide-react';
+
+const Dashboard = lazy(() => import('./components/Dashboard'));
+const ScannerHub = lazy(() => import('./components/ScannerHub'));
+const ProjectionEngine = lazy(() => import('./components/ProjectionEngine'));
 
 const DEFAULT_A11Y = { fontSize: 'default', highContrast: false, reduceMotion: false, dyslexiaFont: false };
 const FONT_SCALE_MAP = { small: 0.875, default: 1, large: 1.125, 'extra-large': 1.25 };
@@ -266,23 +267,29 @@ export default function App() {
 
       {/* Main Content Area */}
       <main style={{ paddingBottom: '40px' }}>
-        {activeTab === 'dashboard' && <Dashboard token={token} />}
-        {activeTab === 'scanner' && <ScannerHub token={token} />}
-        {activeTab === 'projection' && <ProjectionEngine token={token} />}
-        {activeTab === 'feed' && <Feed token={token} />}
-        {activeTab === 'profile' && (
-          <Profile 
-            token={token} 
-            initialEdit={editProfileMode}
-            onEditEnd={() => setEditProfileMode(false)}
-            onUserUpdate={(updatedUser) => {
-              setUser(updatedUser);
-              localStorage.setItem('imprint_user', JSON.stringify(updatedUser));
-            }}
-            a11ySettings={a11ySettings}
-            updateA11y={updateA11y}
-          />
-        )}
+        <Suspense fallback={
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', color: 'var(--primary-green)', fontWeight: 'bold' }}>
+            Loading Pip's tools...
+          </div>
+        }>
+          {activeTab === 'dashboard' && <Dashboard token={token} />}
+          {activeTab === 'scanner' && <ScannerHub token={token} />}
+          {activeTab === 'projection' && <ProjectionEngine token={token} />}
+          {activeTab === 'feed' && <Feed token={token} />}
+          {activeTab === 'profile' && (
+            <Profile 
+              token={token} 
+              initialEdit={editProfileMode}
+              onEditEnd={() => setEditProfileMode(false)}
+              onUserUpdate={(updatedUser) => {
+                setUser(updatedUser);
+                localStorage.setItem('imprint_user', JSON.stringify(updatedUser));
+              }}
+              a11ySettings={a11ySettings}
+              updateA11y={updateA11y}
+            />
+          )}
+        </Suspense>
       </main>
 
     </div>
