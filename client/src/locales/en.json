@@ -1,0 +1,153 @@
+{
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "scanner": "Scanner Hub",
+    "projection": "10-Yr Curve",
+    "feed": "Imprint Feed",
+    "profile": "Profile & Badges",
+    "logout": "Log Out"
+  },
+  "onboarding": {
+    "welcome": "Welcome to Imprint",
+    "intro": "Configure your footprint settings early to start tracking with Pip.",
+    "selectLang": "Select Language",
+    "personalDetails": "Personal Details",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Your Name",
+    "dietLabel": "Diet Preference",
+    "diet": {
+      "vegan": "Vegan",
+      "vegetarian": "Vegetarian",
+      "omnivore": "Balanced / Omnivore",
+      "carnivore": "Meat-heavy"
+    },
+    "commuteLabel": "Primary Commute Mode",
+    "commute": {
+      "walk_bicycle": "Bicycle / Walking",
+      "ev": "Electric Vehicle (EV)",
+      "public_transport": "Metro / Public Bus",
+      "two_wheeler": "Petrol Two-Wheeler",
+      "car": "Petrol/Diesel Car"
+    },
+    "locationLabel": "Your Location",
+    "state": "State / UT",
+    "city": "City",
+    "ward": "Ward / Locality",
+    "selectState": "Select State",
+    "selectCity": "Select City",
+    "selectWard": "Select Locality",
+    "btnNext": "Next",
+    "btnBack": "Back",
+    "btnComplete": "Complete Setup",
+    "tipTitle": "Why do we ask this?",
+    "tipDesc": "Your baseline carbon coefficients are modeled directly from your diet and commute choices. Locality matching maps your standing on the Neighbourhood Pulse leaderboard."
+  },
+  "dashboard": {
+    "title": "My Carbon footprint Dashboard",
+    "mascotTitle": "Pip says:",
+    "weeklyGlance": "This Week at a Glance",
+    "dailyAverage": "Daily Average",
+    "weeklyTotal": "Weekly Total",
+    "targetReduction": "Target Mitigation",
+    "statusSpike": "Weekly emissions spiked",
+    "statusGood": "Weekly emissions decreased",
+    "statusStable": "Stable weekly baseline",
+    "pulse": "Neighbourhood Pulse",
+    "pulseDesc": "Compare your carbon footprints against local averages in your community.",
+    "leaderboardLevel": {
+      "ward": "Local Ward",
+      "city": "City Average",
+      "state": "State Average"
+    },
+    "leaderboardHeaders": {
+      "rank": "Rank",
+      "user": "User",
+      "average": "Daily Avg"
+    },
+    "leaderboardYou": "You",
+    "habits": "Habits History (30 Days)",
+    "habitsDesc": "Analyze how your day-to-day choices impact your stacked emissions profile.",
+    "chartCategories": {
+      "food": "Food",
+      "transport": "Transport",
+      "electricity": "Electricity",
+      "gas": "Gas/Fuel"
+    }
+  },
+  "scanner": {
+    "title": "OCR Bill & Receipt Scanner",
+    "desc": "Upload utilities bills or grocery receipts. Pip extracts the emissions automatically.",
+    "uploadBox": "Click or Drag to Upload Scanned Image",
+    "supportedFiles": "Supports PNG, JPG, PDF (Up to 5MB)",
+    "processing": "Extracting text using Tesseract OCR...",
+    "correctionTitle": "OCR Manual Correction",
+    "correctionDesc": "Pip is unsure of the text. Please confirm the metrics before saving:",
+    "co2Label": "Estimated CO₂ Impact (kg)",
+    "unitsLabel": "Units (kWh, Litres, etc.)",
+    "groceryTotal": "Total Grocery Carbon (kg)",
+    "btnSave": "Save Logs",
+    "btnCancel": "Cancel",
+    "scansHistory": "Recent Upload History"
+  },
+  "projection": {
+    "title": "10-Year Mitigation Projection",
+    "desc": "Model future carbon curves based on lifestyle transitions.",
+    "settingsTitle": "Mitigation Scenarios",
+    "evShift": "Transition to EV / Hybrid",
+    "dietShift": "Plant-based Diet Shift",
+    "efficiencyShift": "Smart Grid / Clean Energy Shift",
+    "chartTitle": "10-Year Carbon Projection Curves (kg CO₂ / year)",
+    "bauCurve": "Business-As-Usual (BAU)",
+    "targetCurve": "Optimized Mitigation",
+    "mitigationImpact": "Long-Term Mitigation Impact",
+    "carbonSaved": "CO₂ Mitigation",
+    "treesSaved": "Equivalent Trees Planted"
+  },
+  "feed": {
+    "title": "Imprint Feed",
+    "desc": "Pip's daily recommendations and ecological logs.",
+    "empty": "Your feed is clean! Let's log more activities to surface smart alerts.",
+    "accept": "Accept Action",
+    "dismiss": "Dismiss"
+  },
+  "profile": {
+    "title": "Ecology Settings",
+    "progress": "My Progress",
+    "streak": "Active Streak",
+    "days": "days",
+    "totalMitigation": "Total CO₂ Mitigation",
+    "badges": "Unlocked Badges",
+    "badgesDesc": "Your ecological achievements and milestones verified by Pip.",
+    "editBtn": "Edit Profile Details",
+    "editTitle": "Edit Your Details",
+    "editSub": "Keep your lifestyle preferences updated so I can give accurate feedback.",
+    "saveMessage": "Saved!",
+    "btnSave": "Save Changes",
+    "btnCancel": "Cancel",
+    "nameLabel": "Full Name",
+    "langLabel": "App Language"
+  },
+  "locations": {
+    "states": {
+      "Karnataka": "Karnataka",
+      "Maharashtra": "Maharashtra",
+      "Delhi": "Delhi",
+      "Tamil Nadu": "Tamil Nadu",
+      "Telangana": "Telangana",
+      "West Bengal": "West Bengal",
+      "Gujarat": "Gujarat",
+      "Uttar Pradesh": "Uttar Pradesh",
+      "Kerala": "Kerala",
+      "Rajasthan": "Rajasthan"
+    },
+    "cities": {
+      "Bengaluru": "Bengaluru",
+      "Mumbai": "Mumbai",
+      "Pune": "Pune",
+      "Chennai": "Chennai",
+      "Hyderabad": "Hyderabad",
+      "Kolkata": "Kolkata",
+      "New Delhi": "New Delhi"
+    }
+  }
+}

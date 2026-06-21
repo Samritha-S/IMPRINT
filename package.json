@@ -1,0 +1,14 @@
+{
+  "name": "imprint-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install-all": "npm install && npm install --prefix server && npm install --prefix client",
+    "seed": "node server/seed.js",
+    "start": "npm run build --prefix client && npx concurrently \"npm run start --prefix server\" \"npx vite preview client --port 3000 --host 127.0.0.1\"",
+    "test": "node server/testEmissions.js && node server/testLocations.js && node server/testAgent.js && node server/testIntegration.js"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
