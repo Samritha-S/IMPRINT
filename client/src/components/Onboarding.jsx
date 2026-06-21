@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PipMascot from './PipMascot';
 import { ChevronRight, ChevronLeft, MapPin, Bell, User } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 
 export default function Onboarding({ onComplete }) {
-  const { t } = useTranslation();
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [state, setState] = useState('');
@@ -123,13 +121,13 @@ export default function Onboarding({ onComplete }) {
             <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
               <PipMascot mood="happy" size={140} />
             </div>
-            <h2>{t('onboarding.welcome')}</h2>
+            <h2>Welcome to Imprint</h2>
             <p style={{ marginBottom: '24px' }}>
-              {t('onboarding.intro')}
+              Configure your footprint settings early to start tracking with Pip.
             </p>
 
             <button className="btn" onClick={handleNext} style={{ marginTop: '20px' }}>
-              {t('onboarding.btnNext')} <ChevronRight size={18} />
+              Next <ChevronRight size={18} />
             </button>
           </div>
         )}
@@ -139,41 +137,41 @@ export default function Onboarding({ onComplete }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
               <PipMascot mood="neutral" size={80} />
               <div>
-                <h3>{t('onboarding.locationLabel')}</h3>
+                <h3>Your Location</h3>
                 <p style={{ margin: 0 }}>"I need this to compare your footprint to others in your locality!"</p>
               </div>
             </div>
 
             <div className="form-group">
-              <label className="form-label">{t('onboarding.state')}</label>
+              <label className="form-label">State / UT</label>
               <select className="form-select" value={state} onChange={e => setState(e.target.value)}>
-                <option value="">{t('onboarding.selectState')}</option>
-                {statesList.map(s => <option key={s} value={s}>{t(`locations.states.${s}`, s)}</option>)}
+                <option value="">Select State</option>
+                {statesList.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
 
             <div className="form-group">
-              <label className="form-label">{t('onboarding.city')}</label>
+              <label className="form-label">City</label>
               <select className="form-select" value={city} onChange={e => setCity(e.target.value)} disabled={!state}>
-                <option value="">{t('onboarding.selectCity')}</option>
-                {citiesList.map(c => <option key={c} value={c}>{t(`locations.cities.${c}`, c)}</option>)}
+                <option value="">Select City</option>
+                {citiesList.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
 
             <div className="form-group">
-              <label className="form-label">{t('onboarding.ward')}</label>
+              <label className="form-label">Ward / Locality</label>
               <select className="form-select" value={ward} onChange={e => setWard(e.target.value)} disabled={!city}>
-                <option value="">{t('onboarding.selectWard')}</option>
+                <option value="">Select Locality</option>
                 {wardsList.map(w => <option key={w} value={w}>{w}</option>)}
               </select>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '30px' }}>
               <button className="btn btn-secondary" onClick={handleBack}>
-                <ChevronLeft size={18} /> {t('onboarding.btnBack')}
+                <ChevronLeft size={18} /> Back
               </button>
               <button className="btn" onClick={handleNext}>
-                {t('onboarding.btnNext')} <ChevronRight size={18} />
+                Next <ChevronRight size={18} />
               </button>
             </div>
           </div>
@@ -202,7 +200,7 @@ export default function Onboarding({ onComplete }) {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '30px' }}>
               <button className="btn btn-secondary" onClick={handleBack}>
-                <ChevronLeft size={18} /> {t('onboarding.btnBack')}
+                <ChevronLeft size={18} /> Back
               </button>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button className="btn btn-secondary" onClick={handleNext}>
@@ -221,17 +219,17 @@ export default function Onboarding({ onComplete }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
               <PipMascot mood="happy" size={80} />
               <div>
-                <h3>{t('onboarding.personalDetails')}</h3>
+                <h3>Personal Details</h3>
                 <p style={{ margin: 0 }}>"Almost there! Tell me a bit about your lifestyle choices."</p>
               </div>
             </div>
 
             <div className="form-group">
-              <label className="form-label">{t('onboarding.fullName')}</label>
+              <label className="form-label">Full Name</label>
               <input 
                 type="text" 
                 className="form-input" 
-                placeholder={t('onboarding.fullNamePlaceholder')} 
+                placeholder="Your Name" 
                 value={name} 
                 onChange={e => setName(e.target.value)} 
                 required 
@@ -251,32 +249,32 @@ export default function Onboarding({ onComplete }) {
             </div>
 
             <div className="form-group">
-              <label className="form-label">{t('onboarding.dietLabel')}</label>
+              <label className="form-label">Diet Preference</label>
               <select className="form-select" value={diet} onChange={e => setDiet(e.target.value)}>
-                <option value="vegan">{t('onboarding.diet.vegan')}</option>
-                <option value="vegetarian">{t('onboarding.diet.vegetarian')}</option>
-                <option value="omnivore">{t('onboarding.diet.omnivore')}</option>
-                <option value="carnivore">{t('onboarding.diet.carnivore')}</option>
+                <option value="vegan">Vegan</option>
+                <option value="vegetarian">Vegetarian</option>
+                <option value="omnivore">Balanced / Omnivore</option>
+                <option value="carnivore">Meat-heavy</option>
               </select>
             </div>
 
             <div className="form-group">
-              <label className="form-label">{t('onboarding.commuteLabel')}</label>
+              <label className="form-label">Primary Commute Mode</label>
               <select className="form-select" value={commute} onChange={e => setCommute(e.target.value)}>
-                <option value="walk_bicycle">{t('onboarding.commute.walk_bicycle')}</option>
-                <option value="ev">{t('onboarding.commute.ev')}</option>
-                <option value="public_transport">{t('onboarding.commute.public_transport')}</option>
-                <option value="two_wheeler">{t('onboarding.commute.two_wheeler')}</option>
-                <option value="car">{t('onboarding.commute.car')}</option>
+                <option value="walk_bicycle">Bicycle / Walking</option>
+                <option value="ev">Electric Vehicle (EV)</option>
+                <option value="public_transport">Metro / Public Bus</option>
+                <option value="two_wheeler">Petrol Two-Wheeler</option>
+                <option value="car">Petrol/Diesel Car</option>
               </select>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '30px' }}>
               <button type="button" className="btn btn-secondary" onClick={handleBack}>
-                <ChevronLeft size={18} /> {t('onboarding.btnBack')}
+                <ChevronLeft size={18} /> Back
               </button>
               <button type="submit" className="btn">
-                {t('onboarding.btnComplete')} <User size={18} />
+                Complete Setup <User size={18} />
               </button>
             </div>
           </form>

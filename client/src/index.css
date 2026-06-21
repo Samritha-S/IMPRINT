@@ -1,3 +1,61 @@
+
+
+/* ── Accessibility: Font Scale ──────────────────────────────── */
+/* --font-scale is set on :root via JS in App.jsx */
+html { font-size: calc(16px * var(--font-scale, 1)); }
+
+/* ── Accessibility: High-Contrast Mode ─────────────────────── */
+/* Cranked-up contrast using brand palette — stays green, not black/white */
+html.hc-mode {
+  --bg-cream: #FFFFFF;
+  --primary-green: #1B5E20;
+  --accent-green: #2E7D32;
+  --text-dark: #000000;
+  --border-leaf: #1B5E20;
+  --white: #FFFFFF;
+  --shadow-soft: 0 4px 12px rgba(0,0,0,0.3);
+  --shadow-hover: 0 8px 20px rgba(0,0,0,0.45);
+}
+html.hc-mode body { background-color: #FFFFFF; color: #000000; }
+html.hc-mode .leaf-card,
+html.hc-mode .sidebar { border: 2px solid #1B5E20; }
+html.hc-mode .form-input,
+html.hc-mode .form-select { border: 2px solid #000000; background: #FFFFFF; }
+
+/* ── Accessibility: Dyslexia-Friendly Font ─────────────────── */
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/ttf/OpenDyslexic-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+html.dyslexia-mode body,
+html.dyslexia-mode input,
+html.dyslexia-mode select,
+html.dyslexia-mode button,
+html.dyslexia-mode textarea {
+  font-family: 'OpenDyslexic', Arial, sans-serif !important;
+  letter-spacing: 0.05em;
+  word-spacing: 0.12em;
+  line-height: 1.8;
+}
+
+/* ── Accessibility: Reduce Motion ──────────────────────────── */
+/* In-app toggle — overrides OS setting for users who prefer control here */
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+/* Also always respect OS-level preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
 /* Modern CSS design system for Imprint */
 :root {
   --bg-cream: #F5F0E8;
@@ -11,6 +69,8 @@
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --shadow-soft: 0 4px 20px rgba(74, 124, 89, 0.08);
   --shadow-hover: 0 8px 30px rgba(74, 124, 89, 0.15);
+  /* Accessibility — controlled via JS in App.jsx */
+  --font-scale: 1;
 }
 
 * {

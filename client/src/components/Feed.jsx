@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PipMascot from './PipMascot';
-import { useTranslation } from 'react-i18next';
 import { HelpCircle, RefreshCw, Check, X, ShieldAlert, FileText, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function Feed({ token }) {
-  const { t } = useTranslation();
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(false);
   const [runningAgent, setRunningAgent] = useState(false);
@@ -83,8 +81,8 @@ export default function Feed({ token }) {
       {/* Feed Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h3>{t('feed.title')}</h3>
-          <p style={{ margin: 0 }}>{t('feed.desc')}</p>
+          <h3>Imprint Feed</h3>
+          <p style={{ margin: 0 }}>Active reasoning logs and suggestions curated by Pip.</p>
         </div>
         <button 
           className="btn" 
@@ -93,19 +91,19 @@ export default function Feed({ token }) {
           style={{ padding: '10px 18px', fontSize: '14px' }}
         >
           <RefreshCw size={16} className={runningAgent ? 'spin' : ''} />
-          {runningAgent ? t('feed.thinking') : t('feed.askPip')}
+          {runningAgent ? 'Pip is thinking...' : 'Ask Pip to Reason'}
         </button>
       </div>
 
       {loading && cards.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '40px' }}>
-          <p>{t('feed.gathering')}</p>
+          <p>Gathering Pip's thoughts...</p>
         </div>
       ) : cards.length === 0 ? (
         <div className="leaf-card" style={{ textAlign: 'center', padding: '45px' }}>
           <PipMascot mood="neutral" size={100} />
-          <h4>{t('feed.noInsights')}</h4>
-          <p>{t('feed.logActivities')}</p>
+          <h4>No Feed insights yet</h4>
+          <p>Log your daily activities or trigger an agent cycle using the button above.</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -150,7 +148,7 @@ export default function Feed({ token }) {
                     }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                          <strong style={{ fontSize: '14px', display: 'block', color: 'var(--primary-green)' }}>{t('feed.recommendation')}</strong>
+                          <strong style={{ fontSize: '14px', display: 'block', color: 'var(--primary-green)' }}>Pip's Recommendation:</strong>
                           <span style={{ fontSize: '14px' }}>{card.suggested_action.action_desc}</span>
                         </div>
                         <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--primary-green)', whiteSpace: 'nowrap' }}>
@@ -161,11 +159,11 @@ export default function Feed({ token }) {
                       <div style={{ display: 'flex', gap: '10px' }}>
                         {card.suggested_action.status === 'accepted' ? (
                           <div style={{ color: 'var(--primary-green)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px' }}>
-                            <Check size={16} /> {t('feed.acceptedLogged')}
+                            <Check size={16} /> Accepted and logged to memory
                           </div>
                         ) : card.suggested_action.status === 'dismissed' ? (
                           <div style={{ color: '#D32F2F', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px' }}>
-                            <X size={16} /> {t('feed.dismiss')}
+                            <X size={16} /> Dismissed
                           </div>
                         ) : (
                           <>
@@ -174,14 +172,14 @@ export default function Feed({ token }) {
                               onClick={() => handleFeedback(card.id, card.suggested_action.action_id, true)}
                               style={{ padding: '6px 14px', borderRadius: '10px', fontSize: '13px' }}
                             >
-                              {t('feed.accept')}
+                              Accept
                             </button>
                             <button 
                               className="btn btn-secondary" 
                               onClick={() => handleFeedback(card.id, card.suggested_action.action_id, false)}
                               style={{ padding: '6px 14px', borderRadius: '10px', fontSize: '13px' }}
                             >
-                              {t('feed.dismiss')}
+                              Dismiss
                             </button>
                           </>
                         )}
@@ -197,11 +195,11 @@ export default function Feed({ token }) {
                     >
                       {expandedTrace[card.id] ? (
                         <>
-                          <ChevronUp size={14} /> {t('feed.hideTrace')}
+                          <ChevronUp size={14} /> Hide Reasoning Trace
                         </>
                       ) : (
                         <>
-                          <ChevronDown size={14} /> {t('feed.viewTrace')}
+                          <ChevronDown size={14} /> View Reasoning Trace
                         </>
                       )}
                     </button>

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { createWorker } from 'tesseract.js';
 import PipMascot from './PipMascot';
-import { useTranslation } from 'react-i18next';
 import { Camera, FileText, Check, AlertTriangle, ArrowRight, Loader } from 'lucide-react';
 
 const SAMPLES = {
@@ -24,7 +23,6 @@ const SAMPLES = {
 };
 
 export default function ScannerHub({ token }) {
-  const { t } = useTranslation();
   const [scanType, setScanType] = useState('bill'); // 'bill' or 'grocery'
   const [loading, setLoading] = useState(false);
   const [ocrText, setOcrText] = useState('');
@@ -177,13 +175,13 @@ export default function ScannerHub({ token }) {
           className={`segment-item ${scanType === 'bill' ? 'active' : ''}`}
           onClick={() => { setScanType('bill'); setScanResult(null); setShowManualForm(false); }}
         >
-          {t('scanner.billTab')}
+          Utility / Fuel Bill Scanner
         </div>
         <div 
           className={`segment-item ${scanType === 'grocery' ? 'active' : ''}`}
           onClick={() => { setScanType('grocery'); setScanResult(null); setShowManualForm(false); }}
         >
-          {t('scanner.groceryTab')}
+          Grocery Receipt Scanner
         </div>
       </div>
 
@@ -191,25 +189,25 @@ export default function ScannerHub({ token }) {
         
         {/* Input Scan Section */}
         <div className="leaf-card">
-          <h3>{t('scanner.uploadTitle')}</h3>
-          <p>{t('scanner.uploadSubDesc')}</p>
+          <h3>Upload Image Scan</h3>
+          <p>We extract carbon footprint data directly using device-side OCR.</p>
 
           <div style={{ border: '3px dashed var(--border-leaf)', borderRadius: '16px', padding: '30px', textAlign: 'center', margin: '20px 0', background: 'rgba(74, 124, 89, 0.02)' }}>
             <Camera size={48} style={{ color: 'var(--primary-green)', marginBottom: '15px' }} />
             <div>
               <label className="btn" style={{ padding: '8px 16px', fontSize: '14px', cursor: 'pointer' }}>
-                {t('scanner.chooseImage')}
+                Choose Scan Image
                 <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
               </label>
             </div>
             <span style={{ fontSize: '12px', color: '#777', display: 'block', marginTop: '10px' }}>
-              {t('scanner.supportedFiles')}
+              Supports PNG, JPG, PDF (Up to 5MB)
             </span>
           </div>
 
           <div style={{ marginTop: '20px' }}>
             <span style={{ fontWeight: 'bold', fontSize: '13px', display: 'block', marginBottom: '8px' }}>
-              {t('scanner.orSample')}
+              Or test instantly with a preloaded sample text:
             </span>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button 
@@ -217,7 +215,7 @@ export default function ScannerHub({ token }) {
                 style={{ padding: '8px 12px', fontSize: '12px' }}
                 onClick={() => runOcr(scanType === 'bill' ? SAMPLES.electricity : SAMPLES.grocery)}
               >
-                {t('scanner.loadSample')}
+                Load Sample Text
               </button>
             </div>
           </div>
@@ -225,19 +223,19 @@ export default function ScannerHub({ token }) {
 
         {/* Status / Output Section */}
         <div className="leaf-card">
-          <h3>{t('scanner.outputTitle')}</h3>
+          <h3>Scanner Output</h3>
           
           {loading && (
             <div style={{ textAlign: 'center', padding: '30px' }}>
               <Loader className="spin" size={36} style={{ color: 'var(--primary-green)', margin: '0 auto 10px auto' }} />
-              <p>{t('scanner.analyzing')}</p>
+              <p>Pip is analyzing your document using Tesseract OCR...</p>
             </div>
           )}
 
           {!loading && !scanResult && !showManualForm && (
             <div style={{ textAlign: 'center', padding: '30px', color: '#888' }}>
               <FileText size={40} style={{ margin: '0 auto 10px auto' }} />
-              <p>{t('scanner.uploadPrompt')}</p>
+              <p>Upload a bill or load a sample to inspect extracted emissions data.</p>
             </div>
           )}
 
@@ -246,7 +244,7 @@ export default function ScannerHub({ token }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-green)', fontWeight: 'bold' }}>
                 <Check size={20} />
-                <span>{t('scanner.success')}</span>
+                <span>Scan Processed Successfully!</span>
               </div>
 
               {scanResult.parsed && (
@@ -257,14 +255,14 @@ export default function ScannerHub({ token }) {
                   <p style={{ fontSize: '14px', margin: '5px 0' }}>
                     {scanType === 'bill' ? (
                       <>
-                        <strong>{t('scanner.provider')}:</strong> {scanResult.parsed.provider}<br />
-                        <strong>{t('scanner.unitsLabel')}:</strong> {scanResult.parsed.units} units<br />
-                        <strong>{t('scanner.emissions')}:</strong> {scanResult.parsed.co2_kg} kg CO₂
+                        <strong>Provider:</strong> {scanResult.parsed.provider}<br />
+                        <strong>Units:</strong> {scanResult.parsed.units} units<br />
+                        <strong>Emissions:</strong> {scanResult.parsed.co2_kg} kg CO₂
                       </>
                     ) : (
                       <>
-                        <strong>{t('scanner.itemsFound')}:</strong> {scanResult.parsed.items?.length || 0}<br />
-                        <strong>{t('scanner.emissions')}:</strong> {scanResult.parsed.total_kg ? Number(scanResult.parsed.total_kg).toFixed(1) : 0} kg CO₂
+                        <strong>Items Found:</strong> {scanResult.parsed.items?.length || 0}<br />
+                        <strong>Emissions:</strong> {scanResult.parsed.total_kg ? Number(scanResult.parsed.total_kg).toFixed(1) : 0} kg CO₂
                       </>
                     )}
                   </p>
@@ -275,7 +273,7 @@ export default function ScannerHub({ token }) {
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                   <PipMascot mood="happy" size={70} />
                   <div className="speech-bubble" style={{ fontSize: '13px' }}>
-                    <strong>{t('scanner.pipInsight')}</strong><br />
+                    <strong>Pip's Instant Insight:</strong><br />
                     "{scanResult.instantInsight}"
                   </div>
                 </div>
@@ -288,13 +286,13 @@ export default function ScannerHub({ token }) {
             <form onSubmit={handleManualSubmit}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--earth-brown)', marginBottom: '15px', fontWeight: 'bold' }}>
                 <AlertTriangle size={20} />
-                <span>{t('scanner.lowConfidence')}</span>
+                <span>Low confidence/Unreadable scan. Verify manually:</span>
               </div>
 
               {scanType === 'bill' ? (
                 <>
                   <div className="form-group">
-                    <label className="form-label">{t('scanner.utilityType')}</label>
+                    <label className="form-label">Utility Type</label>
                     <select 
                       className="form-select" 
                       value={manualDetails.type}
@@ -309,7 +307,7 @@ export default function ScannerHub({ token }) {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">{t('scanner.providerName')}</label>
+                    <label className="form-label">Provider Name</label>
                     <input 
                       type="text" 
                       className="form-input" 
@@ -322,7 +320,7 @@ export default function ScannerHub({ token }) {
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <div className="form-group">
-                      <label className="form-label">{t('scanner.unitsLabel')}</label>
+                      <label className="form-label">Units/Volume</label>
                       <input 
                         type="number" 
                         className="form-input" 
@@ -333,7 +331,7 @@ export default function ScannerHub({ token }) {
                       />
                     </div>
                     <div className="form-group">
-                      <label className="form-label">{t('scanner.billingAmount')}</label>
+                      <label className="form-label">Billing Amount</label>
                       <input 
                         type="number" 
                         className="form-input" 
@@ -345,7 +343,7 @@ export default function ScannerHub({ token }) {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">{t('scanner.billingPeriod')}</label>
+                    <label className="form-label">Billing Period</label>
                     <input 
                       type="text" 
                       className="form-input" 
@@ -359,7 +357,7 @@ export default function ScannerHub({ token }) {
               ) : (
                 <>
                   <div className="form-group">
-                    <label className="form-label">{t('scanner.groceryTotal')}</label>
+                    <label className="form-label">Total Groceries Carbon (kg)</label>
                     <input 
                       type="number" 
                       step="0.1"
@@ -370,12 +368,12 @@ export default function ScannerHub({ token }) {
                       required
                     />
                   </div>
-                  <p style={{ fontSize: '12px', color: '#666' }}>{t('scanner.groceriesNote')}</p>
+                  <p style={{ fontSize: '12px', color: '#666' }}>We will map categories to open environmental benchmarks.</p>
                 </>
               )}
 
               <button type="submit" className="btn" style={{ width: '100%', marginTop: '10px' }}>
-                {t('scanner.submitManual')} <ArrowRight size={18} />
+                Submit Manual Entry <ArrowRight size={18} />
               </button>
             </form>
           )}

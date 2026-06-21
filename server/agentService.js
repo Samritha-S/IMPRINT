@@ -21,38 +21,6 @@ const SUGGESTION_LOCALIZATIONS = {
     ev_charge_offpeak: 'Charge your electric two-wheeler during off-peak night hours',
     cook_covered: 'Use covers on pots/pans to reduce PNG/LPG cooking times'
   },
-  hi: {
-    meatless_monday: 'सोमवार को चिकन/मछली की जगह शाकाहारी भोजन लें',
-    switch_to_metro: 'दैनिक सफर के लिए सार्वजनिक वाहन या मेट्रो का उपयोग करें',
-    ac_thermostat: 'अपने एसी का तापमान बढ़ाकर 24 डिग्री सेल्सियस करें',
-    unplug_standby: 'रात में बिजली के बोर्ड और उपकरणों को बंद कर दें',
-    ev_charge_offpeak: 'भीड़भाड़ न होने वाले रात के घंटों में अपना इलेक्ट्रिक वाहन चार्ज करें',
-    cook_covered: 'रसोई गैस बचाने के लिए खाना बनाते समय बर्तनों को ढक्कन से ढकें'
-  },
-  ta: {
-    meatless_monday: 'திங்களன்று இறைச்சிக்கு பதிலாக காய்கறி உணவுகளை உண்ணுங்கள்',
-    switch_to_metro: 'தினசரி பயணத்திற்கு பொதுப் போக்குவரத்து/மெட்ரோவைப் பயன்படுத்தவும்',
-    ac_thermostat: 'ஏசி வெப்பநிலையை 24 டிகிரி செல்சியஸாக உயர்த்தவும்',
-    unplug_standby: 'இரவில் மின் பலகைகள் மற்றும் மின்னணு சாதனங்களை அணைக்கவும்',
-    ev_charge_offpeak: 'மின்சார வாகனங்களை இரவில் மின் பயன்பாடு குறைந்த நேரத்தில் சார்ஜ் செய்யவும்',
-    cook_covered: 'சமையல் எரிவாயুவைக் குறைக்க பாத்திரங்களை மூடி சமைக்கவும்'
-  },
-  te: {
-    meatless_monday: 'సోమవారాల్లో మాంసానికి బదులుగా కూరగాయల భోజనం తీసుకోండి',
-    switch_to_metro: 'రోజువారీ ప్రయాణానికి ప్రజా రవాణా లేదా మెట్రోను ఉపయోగించండి',
-    ac_thermostat: 'మీ ఏసీ ఉష్ణోగ్రతను 24°C కు పెంచండి',
-    unplug_standby: 'రాత్రి వేళల్లో పవర్ బోర్డులు మరియు ఎలక్ట్రానిక్స్ ఆఫ్ చేయండి',
-    ev_charge_offpeak: 'రాత్రి వేళల్లో మీ ఈవీని ఛార్జ్ చేయండి',
-    cook_covered: 'వంట గ్యాస్ వినియోగాన్ని తగ్గించడానికి పాత్రలపై మూతలు ఉంచండి'
-  },
-  bn: {
-    meatless_monday: 'সোমবারে মাংসের পরিবর্তে শাকসবজি খান',
-    switch_to_metro: 'প্রতিদিনের যাতায়াতের জন্য গণপরিবহন বা মেট্রো ব্যবহার করুন',
-    ac_thermostat: 'আপনার এসির তাপমাত্রা ২৪ ডিগ্রি সেলসিয়াসে বাড়ান',
-    unplug_standby: 'রাতে পাওয়ার স্ট্রিপ এবং বৈদ্যুতিন সরঞ্জাম বন্ধ রাখুন',
-    ev_charge_offpeak: 'রাতে অফ-পিক সময়ে আপনার ইলেকট্রিক গাড়ি চার্জ করুন',
-    cook_covered: 'গ্যাসের ব্যবহার কমাতে রান্নার সময় পাত্র ঢেকে রাখুন'
-  }
 };
 
 const PIP_MESSAGES = {
@@ -67,66 +35,6 @@ const PIP_MESSAGES = {
     spike_pattern: (pct) => `Your average footprint spiked by ${pct}% this week compared to last.`,
     weekend_food_pattern: (pct) => `Your food carbon footprint is ${pct}% higher on weekends.`
   },
-  hi: {
-    welcome: "पिप यहाँ है! इम्प्रिंट में आपका स्वागत है। अपने दैनिक कार्यों को लॉग करें या रसीद स्कैन करें ताकि मैं आपके फ़ुटप्रिंट को ट्रैक कर सकूँ!",
-    spike: (msg) => `ओह नहीं! मैंने इस सप्ताह आपके कार्बन फ़ुटप्रिंट में अचानक वृद्धि देखी। ${msg} आइए मिलकर इसे कम करने का प्रयास करें।`,
-    higher: (percent, level) => {
-      const levelMap = { ward: 'वार्ड', city: 'शहर', state: 'राज्य' };
-      const localLevel = levelMap[level] || level;
-      return `नमस्ते। आपका कार्बन फ़ुटप्रिंट आपके ${localLevel} में स्थानीय औसत से ${percent}% अधिक चल रहा है। हमें कुछ बदलाव करने चाहिए!`;
-    },
-    high_avg: (avg) => `उफ़! आपका साप्ताहिक उत्सर्जन औसत ${avg} किलोग्राम CO₂ है, जो कि काफी अधिक है। आइए देखें कि हम इसे कहाँ कम कर सकते हैं।`,
-    happy: (avg) => `बहुत बढ़िया! आपका औसत उत्सर्जन ${avg} किलोग्राम CO₂/दिन पर बना हुआ है। आप ऊर्जा और संसाधनों की बचत करने का शानदार काम कर रहे हैं। इसे जारी रखें!`,
-    weekend_food: (msg) => `अरे! मैंने देखा कि ${msg} शायद हम अगले सप्ताहांत के लिए कम कार्बन वाले भोजन की योजना बना सकते हैं?`,
-    stable: (avg) => `पिप यहाँ है! आपका कार्बन फ़ुटप्रिंट ${avg} किलोग्राम CO₂/दिन पर स्थिर है। आपके लॉग्स को देखते हुए, हमारे पास और बेहतर करने के आसान अवसर हैं!`,
-    spike_pattern: (pct) => `आपका औसत फ़ुटप्रिंट पिछले सप्ताह की तुलना में इस सप्ताह ${pct}% बढ़ गया है।`,
-    weekend_food_pattern: (pct) => `सप्ताहांत पर आपका भोजन का कार्बन फुटप्रिंट ${pct}% अधिक है।`
-  },
-  ta: {
-    welcome: "பிப் இங்கே! இம்ப்ரின்ட்டிற்கு உங்களை வரவேற்கிறேன். உங்கள் தினசரி செயல்பாடுகளைப் பதிவு செய்யவும் அல்லது ரசீதை ஸ்கேன் செய்யவும், நான் உங்கள் கார்பன் அளவைக் கண்காணிக்க உதவுகிறேன்!",
-    spike: (msg) => `ஐயோ! இந்த வாரம் உங்கள் கார்பன் அளவில் திடீர் உயர்வை நான் கவனித்தேன். ${msg} இதை நாம் இணைந்து குறைக்க முயற்சிப்போம்.`,
-    higher: (percent, level) => {
-      const levelMap = { ward: 'வட்டாரம்', city: 'நகரம்', state: 'மாநிலம்' };
-      const localLevel = levelMap[level] || level;
-      return `வணக்கம். உங்கள் கார்பன் அளவு உங்கள் ${localLevel} உள்ளூர் சராசரியை விட ${percent}% அதிகமாக உள்ளது. சில மாற்றங்களை நாம் செய்ய வேண்டும்!`;
-    },
-    high_avg: (avg) => `அப்பாடா! உங்கள் வாராந்திர சராசரி உமிழ்வு ${avg} கிலோ CO₂ ஆகும், இது சற்று அதிகமாக உள்ளது. எங்கே குறைக்கலாம் என்று பார்ப்போம்.`,
-    happy: (avg) => `அருமை! உங்கள் தினசரி சராசரி உமிழ்வு ${avg} கிலோ CO₂ ஆக நன்றாக உள்ளது. ஆற்றலையும் வளங்களையும் சேமிப்பதில் சிறந்த முறையில் செயல்படுகிறீர்கள். தொடருங்கள்!`,
-    weekend_food: (msg) => `ஹே! நான் கவனித்தேன் ${msg} அடுத்த வார இறுதியில் குறைந்த கார்பன் உணவுகளைத் திட்டமிடலாমা?`,
-    stable: (avg) => `பிப் இங்கே! உங்கள் கார்பன் அளவு ஒரு நாளைக்கு ${avg} கிலோ CO₂ இல் நிலையாக உள்ளது. இன்னும் சிறப்பாகச் செய்வதற்கான எளிய வாய்ப்புகள் உள்ளன!`,
-    spike_pattern: (pct) => `கடந்த வாரத்தை விட இந்த வாரம் உங்கள் சராசரி கார்பன் அளவு ${pct}% அதிகரித்துள்ளது.`,
-    weekend_food_pattern: (pct) => `வார இறுதி நாட்களில் உங்கள் உணவு உமிழ்வு ${pct}% அதிகமாக உள்ளது.`
-  },
-  te: {
-    welcome: "పిప్ ఇక్కడ ఉన్నాడు! ఇంప్రింట్ లోనికి స్వాగతం. మీ రోజువారీ పనులను నమోదు చేయండి లేదా రసీదును స్కాన్ చేయండి, మీ కార్బన్ ప్రభావాన్ని ట్రాక్ చేయడానికి నేను సహాయం చేస్తాను!",
-    spike: (msg) => `అయ్యో! ఈ వారం మీ కార్బన్ ప్రభావంలో ఆకస్మిక పెరుగుదలను నేను గమనించాను. ${msg} కలిసి దీనిని తగ్గించడానికి ప్రయత్నిద్దాం.`,
-    higher: (percent, level) => {
-      const levelMap = { ward: 'వార్డు', city: 'నగరం', state: 'రాష్ట్రం' };
-      const localLevel = levelMap[level] || level;
-      return `నమస్తే. మీ కార్బన్ ప్రభావం మీ ${localLevel} లోని స్థానిక సగటు కంటే ${percent}% ఎక్కువగా ఉంది. మనం కొన్ని మార్పులు చేయాలి!`;
-    },
-    high_avg: (avg) => `అబ్బో! మీ వారపు సగటు ఉద్గారాలు ${avg} కిలోల CO₂ గా ఉన్నాయి, ఇది కొంచెం ఎక్కువ. ఎక్కడ తగ్గించవచ్చో చూద్దాం.`,
-    happy: (avg) => `అద్భుతం! మీ రోజువారీ సగటు ఉద్గారాలు ${avg} కిలోల CO₂ గా చక్కగా ఉన్నాయి. మీరు ఇంధనం మరియు వనరులను ఆదా చేయడంలో చాలా మంచి పని చేస్తున్నారు. ఇలాగే కొనసాగించండి!`,
-    weekend_food: (msg) => `హే! నేను గమనించాను ${msg} బహుశా మనం వచ్చే వారాంతానికి తక్కువ కార్బన్ భోజనాన్ని ప్లాన్ చేయవచ్చా?`,
-    stable: (avg) => `పిప్ ఇక్కడ ఉన్నాడు! మీ కార్బన్ ప్రభావం రోజుకు ${avg} కిలోల CO₂ వద్ద స్థిరంగా ఉంది. మీ లాగ్‌లను పరిశీలిస్తే, మరింత మెరుగ్గా చేయడానికి మనకు సులభమైన అవకాశాలు ఉన్నాయి!`,
-    spike_pattern: (pct) => `గత వారంతో పోలిస్తే ఈ వారం మీ సగటు కార్బన్ ఉద్గారం ${pct}% పెరిగింది.`,
-    weekend_food_pattern: (pct) => `వారాంతాల్లో మీ ఆహార కార్బన్ ప్రభావం ${pct}% ఎక్కువగా ఉంది.`
-  },
-  bn: {
-    welcome: "পিপ এখানে! ইমপ্রিন্ট-এ আপনাকে স্বাগত জানাই। আপনার প্রতিদিনের কার্যকলাপ নথিবদ্ধ করুন বা রশিদ স্ক্যান করুন যাতে আমি আপনার কার্বন ফুটপ্রিন্ট ট্র্যাক করতে পারি!",
-    spike: (msg) => `ওহ না! আমি এই সপ্তাহে আপনার কার্বন ফুটপ্রিন্টে হঠাৎ বৃদ্ধি লক্ষ্য করেছি। ${msg} আসুন একসাথে এটি কমানোর চেষ্টা করি।`,
-    higher: (percent, level) => {
-      const levelMap = { ward: 'ওয়ার্ড', city: 'শহর', state: 'রাজ্য' };
-      const localLevel = levelMap[level] || level;
-      return `নমস্কার। আপনার কার্বন ফুটপ্রিন্ট আপনার ${localLevel}-এর স্থানীয় গড়ের চেয়ে ${percent}% বেশি। আমাদের কিছু পরিবর্তন করা উচিত!`;
-    },
-    high_avg: (avg) => `উফ! আপনার সাপ্তাহিক নির্গমনের গড় ${avg} কেজি CO₂, যা বেশ বেশি। আসুন দেখি কীভাবে এটি কমানো যায়।`,
-    happy: (avg) => `চমৎকার! আপনার প্রতিদিনের নির্গমনের গড় ${avg} কেজি CO₂-এ রয়েছে। আপনি শক্তি ও সম্পদ বাঁচানোর দারুণ কাজ করছেন। এটি চালিয়ে যান!`,
-    weekend_food: (msg) => `আরে! আমি লক্ষ্য করেছি যে ${msg} হয়তো আমরা আগামী উইকএন্ডের জন্য কম কার্বনযুক্ত খাবারের পরিকল্পনা করতে পারি?`,
-    stable: (avg) => `পিপ এখানে! আপনার কার্বন ফুটপ্রিন্ট প্রতিদিন ${avg} কেজি CO₂-এ স্থিতিশীল রয়েছে। আপনার লগ দেখে মনে হচ্ছে আরও ভালো করার কিছু সহজ সুযোগ রয়েছে!`,
-    spike_pattern: (pct) => `গত সপ্তাহের তুলনায় এই সপ্তাহে আপনার গড় কার্বন ফুটপ্রিন্ট ${pct}% বৃদ্ধি পেয়েছে।`,
-    weekend_food_pattern: (pct) => `উইকএন্ডে আপনার খাবারের কার্বন ফুটপ্রিন্ট ${pct}% বেশি।`
-  }
 };
 
 // Define Agent Tools (functions callable by the agent or deterministic parser)
@@ -312,8 +220,7 @@ const tools = {
    * @returns {object} Action recommendation containing action_id, localized action_desc, and estimated savings
    */
   suggestAction(userId, context = {}) {
-    const user = db.prepare('SELECT language FROM users WHERE id = ?').get(userId);
-    const lang = user ? user.language : 'en';
+    const lang = 'en';
 
     // Fetch user feedback to avoid suggesting dismissed/already accepted actions
     const pastFeedback = db.prepare('SELECT action_id, accepted FROM agent_feedback WHERE user_id = ?').all(userId);
@@ -444,10 +351,7 @@ function runDeterministicLoop(userId) {
   const trace = [];
   trace.push("Initializing Pip Mascot reasoning loop.");
 
-  // Fetch user language preference
-  const user = db.prepare('SELECT language FROM users WHERE id = ?').get(userId);
-  const lang = user ? user.language : 'en';
-  const localMsgs = PIP_MESSAGES[lang] || PIP_MESSAGES.en;
+  const localMsgs = PIP_MESSAGES.en;
 
   // Gather context
   const summary = tools.getEmissionsSummary(userId, 'week');
@@ -539,16 +443,11 @@ async function runClaudeLoop(userId, apiKey) {
   // Standard format: System prompt describing Pip, and available tools.
   // We feed it to Claude, get tool calls back, execute them locally, return results to Claude, and get final response.
   try {
-    const user = db.prepare('SELECT language FROM users WHERE id = ?').get(userId);
-    const lang = user ? user.language : 'en';
-    const langNames = { en: 'English', hi: 'Hindi', ta: 'Tamil', te: 'Telugu', bn: 'Bengali' };
-    const targetLangName = langNames[lang] || 'English';
-
     const systemPrompt = `You are Pip, a cute, friendly, and helpful duckling mascot. Your mood is determined by emissions data.
-IMPORTANT: You must write the "message" and "action_desc" strictly in the ${targetLangName} language. Do not output in English unless ${targetLangName} is English. Ensure Pip's tone is natural, conversational, and matches local idioms in ${targetLangName}.
+IMPORTANT: You must write the "message" and "action_desc" strictly in English. Ensure Pip's tone is natural and conversational.
 Your output must be a JSON object containing:
 - "mood": "happy" | "neutral" | "concerned"
-- "message": A personalized message from Pip explaining his reasoning in ${targetLangName}
+- "message": A personalized message from Pip explaining his reasoning in English
 - "suggested_action": A JSON object containing { "action_id": string, "action_desc": string, "savings_kg": number }
 
 You have access to the following tools:

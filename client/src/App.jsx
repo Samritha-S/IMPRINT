@@ -6,26 +6,36 @@ import ProjectionEngine from './components/ProjectionEngine';
 import Feed from './components/Feed';
 import Profile from './components/Profile';
 import PipMascot from './components/PipMascot';
-import { LayoutDashboard, Camera, LineChart, FileText, User as UserIcon, LogOut, Leaf, Edit3 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { LayoutDashboard, Camera, LineChart, FileText, User as UserIcon, LogOut, Leaf, Edit3, Settings } from 'lucide-react';
+
+const DEFAULT_A11Y = { fontSize: 'default', highContrast: false, reduceMotion: false, dyslexiaFont: false };
+const FONT_SCALE_MAP = { small: 0.875, default: 1, large: 1.125, 'extra-large': 1.25 };
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('imprint_token') || '');
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('imprint_user') || 'null'));
   const [activeTab, setActiveTab] = useState('dashboard');
   const [editProfileMode, setEditProfileMode] = useState(false);
-  const { t, i18n } = useTranslation();
+
+  // Accessibility settings — persisted to localStorage, applied to <html>
+  const [a11ySettings, setA11ySettings] = useState(() => {
+    try { return { ...DEFAULT_A11Y, ...JSON.parse(localStorage.getItem('imprint_a11y') || '{}') }; }
+    catch { return DEFAULT_A11Y; }
+  });
 
   useEffect(() => {
-    if (user && user.language) {
-      i18n.changeLanguage(user.language);
-      localStorage.setItem('imprint_lang', user.language);
-    }
-  }, [user, i18n]);
+    const html = document.documentElement;
+    // Font scale
+    html.style.setProperty('--font-scale', FONT_SCALE_MAP[a11ySettings.fontSize] ?? 1);
+    // Theme classes
+    html.classList.toggle('hc-mode', !!a11ySettings.highContrast);
+    html.classList.toggle('reduce-motion', !!a11ySettings.reduceMotion);
+    html.classList.toggle('dyslexia-mode', !!a11ySettings.dyslexiaFont);
+    // Persist
+    localStorage.setItem('imprint_a11y', JSON.stringify(a11ySettings));
+  }, [a11ySettings]);
 
-  useEffect(() => {
-    document.documentElement.lang = i18n.language || 'en';
-  }, [i18n.language]);
+  const updateA11y = (key, value) => setA11ySettings(prev => ({ ...prev, [key]: value }));
   
   // Login / Register state for auth screen
   const [isLogin, setIsLogin] = useState(true);
@@ -175,35 +185,35 @@ export default function App() {
               onClick={() => changeTab('dashboard')}
             >
               <LayoutDashboard size={20} />
-              <span>{t('sidebar.dashboard')}</span>
+              <span>Dashboard</span>
             </li>
             <li 
               className={`nav-item ${activeTab === 'scanner' ? 'active' : ''}`}
               onClick={() => changeTab('scanner')}
             >
               <Camera size={20} />
-              <span>{t('sidebar.scanner')}</span>
+              <span>Scanner Hub</span>
             </li>
             <li 
               className={`nav-item ${activeTab === 'projection' ? 'active' : ''}`}
               onClick={() => changeTab('projection')}
             >
               <LineChart size={20} />
-              <span>{t('sidebar.projection')}</span>
+              <span>10-Yr Curve</span>
             </li>
             <li 
               className={`nav-item ${activeTab === 'feed' ? 'active' : ''}`}
               onClick={() => changeTab('feed')}
             >
               <FileText size={20} />
-              <span>{t('sidebar.feed')}</span>
+              <span>Imprint Feed</span>
             </li>
             <li 
               className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}
               onClick={() => changeTab('profile')}
             >
               <UserIcon size={20} />
-              <span>{t('sidebar.profile')}</span>
+              <span>Profile & Badges</span>
             </li>
           </ul>
         </nav>
@@ -248,45 +258,8 @@ export default function App() {
             onClick={handleLogout}
             style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#FFF', padding: '8px 12px', borderRadius: '10px', fontSize: '13px', marginBottom: '15px' }}
           >
-            <LogOut size={16} /> {t('sidebar.logout')}
+            <LogOut size={16} /> Log Out
           </button>
-          <div className="language-selector" style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '10px', borderRadius: '10px', backdropFilter: 'blur(5px)', border: '1px solid rgba(255, 255, 255, 0.3)' }}>
-            <label style={{ display: 'block', fontSize: '12px', marginBottom: '6px', color: 'var(--text-dark)', fontWeight: '600' }}>
-              {t('profile.langLabel') || 'Language'}
-            </label>
-            <select 
-              value={i18n.language} 
-              onChange={async (e) => {
-                const lng = e.target.value;
-                i18n.changeLanguage(lng);
-                localStorage.setItem('imprint_lang', lng);
-                if (user) {
-                  const updatedUser = { ...user, language: lng };
-                  setUser(updatedUser);
-                  localStorage.setItem('imprint_user', JSON.stringify(updatedUser));
-                  try {
-                    await fetch('/api/users/profile', {
-                      method: 'PATCH',
-                      headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                      },
-                      body: JSON.stringify(updatedUser)
-                    });
-                  } catch (err) {
-                    console.error('Failed to save language', err);
-                  }
-                }
-              }}
-              style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid rgba(0,0,0,0.1)', background: 'rgba(255,255,255,0.7)', fontSize: '13px', outline: 'none' }}
-            >
-              <option value="en">English</option>
-              <option value="hi">हिन्दी</option>
-              <option value="ta">தமிழ்</option>
-              <option value="te">తెలుగు</option>
-              <option value="bn">বাংলা</option>
-            </select>
-          </div>
         </div>
       </aside>
 
@@ -305,7 +278,9 @@ export default function App() {
             onUserUpdate={(updatedUser) => {
               setUser(updatedUser);
               localStorage.setItem('imprint_user', JSON.stringify(updatedUser));
-            }} 
+            }}
+            a11ySettings={a11ySettings}
+            updateA11y={updateA11y}
           />
         )}
       </main>

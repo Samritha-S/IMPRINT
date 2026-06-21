@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Award, Flame, Calendar, MapPin, Smile, Edit3, X, Save } from 'lucide-react';
+import { Award, Flame, Calendar, MapPin, Smile, Edit3, X, Save, Settings, Eye, Type, Zap, BookOpen } from 'lucide-react';
 import PipMascot from './PipMascot';
-import { useTranslation } from 'react-i18next';
 
-export default function Profile({ token, onUserUpdate, initialEdit = false, onEditEnd }) {
-  const { t } = useTranslation();
+export default function Profile({ token, onUserUpdate, initialEdit = false, onEditEnd, a11ySettings = {}, updateA11y = () => {} }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(initialEdit);
@@ -44,7 +42,6 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
         setDiet(data.user.diet);
         setCommute(data.user.commute);
 
-        
         // Parsed location representation helper
         const locParts = data.user.location.split(', ');
         if (locParts.length === 3) {
@@ -211,7 +208,7 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
               }}
               style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', padding: '8px 14px' }}
             >
-              <Edit3 size={16} /> {t('profile.editBtn')}
+              <Edit3 size={16} /> Edit Profile Details
             </button>
           </div>
         ) : (
@@ -219,8 +216,8 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
               <PipMascot mood="neutral" size={70} />
               <div>
-                <h3>{t('profile.editTitle')}</h3>
-                <p style={{ margin: 0 }}>{t('profile.editSub')}</p>
+                <h3>Edit Your Details</h3>
+                <p style={{ margin: 0 }}>Keep your lifestyle preferences updated so I can give accurate feedback.</p>
               </div>
             </div>
 
@@ -232,7 +229,7 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
               <div className="form-group">
-                <label className="form-label">{t('profile.nameLabel')}</label>
+                <label className="form-label">Full Name</label>
                 <input 
                   type="text" 
                   className="form-input" 
@@ -243,7 +240,7 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
               </div>
 
               <div className="form-group">
-                <label className="form-label">{t('onboarding.dietLabel')}</label>
+                <label className="form-label">Diet Preference</label>
                 <select className="form-select" value={diet} onChange={e => setDiet(e.target.value)}>
                   <option value="vegan">Vegan</option>
                   <option value="vegetarian">Vegetarian</option>
@@ -253,7 +250,7 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
               </div>
 
               <div className="form-group">
-                <label className="form-label">{t('onboarding.commuteLabel')}</label>
+                <label className="form-label">Primary Commute Mode</label>
                 <select className="form-select" value={commute} onChange={e => setCommute(e.target.value)}>
                   <option value="walk_bicycle">Bicycle / Walking</option>
                   <option value="ev">Electric Vehicle (EV)</option>
@@ -264,11 +261,11 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
               </div>
             </div>
 
-            <h4 style={{ margin: '20px 0 10px 0', borderBottom: '1px solid var(--border-leaf)', paddingBottom: '8px' }}>{t('onboarding.locationLabel')}</h4>
+            <h4 style={{ margin: '20px 0 10px 0', borderBottom: '1px solid var(--border-leaf)', paddingBottom: '8px' }}>Your Location</h4>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '15px' }}>
               <div className="form-group">
-                <label className="form-label">{t('onboarding.state')}</label>
+                <label className="form-label">State / UT</label>
                 <select className="form-select" value={state} onChange={e => handleStateChange(e.target.value)}>
                   <option value="">Select State</option>
                   {statesList.map(s => <option key={s} value={s}>{s}</option>)}
@@ -276,7 +273,7 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
               </div>
 
               <div className="form-group">
-                <label className="form-label">{t('onboarding.city')}</label>
+                <label className="form-label">City</label>
                 <select className="form-select" value={city} onChange={e => handleCityChange(e.target.value)} disabled={!state}>
                   <option value="">Select City</option>
                   {citiesList.map(c => <option key={c} value={c}>{c}</option>)}
@@ -284,7 +281,7 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
               </div>
 
               <div className="form-group">
-                <label className="form-label">{t('onboarding.ward')}</label>
+                <label className="form-label">Ward / Locality</label>
                 <select className="form-select" value={ward} onChange={e => setWard(e.target.value)} disabled={!city}>
                   <option value="">Select Locality</option>
                   {wardsList.map(w => <option key={w} value={w}>{w}</option>)}
@@ -304,14 +301,14 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
                 }}
                 style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
               >
-                <X size={16} /> {t('profile.btnCancel')}
+                <X size={16} /> Cancel
               </button>
               <button 
                 type="submit" 
                 className="btn"
                 style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
               >
-                <Save size={16} /> {t('profile.btnSave')}
+                <Save size={16} /> Save Changes
               </button>
             </div>
           </form>
@@ -406,7 +403,107 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
         </div>
       </div>
 
+      {/* ── Accessibility Settings ──────────────────────────── */}
+      <div className="leaf-card" style={{ marginTop: '24px' }} aria-label="Accessibility settings panel">
+        <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+          <Settings size={20} /> Accessibility Settings
+        </h3>
+        <p style={{ fontSize: '13px', color: '#777', marginBottom: '20px', marginTop: '-8px' }}>
+          These settings adjust how Imprint renders for you. They're saved locally and applied immediately.
+        </p>
+
+        {/* Font Size */}
+        <div style={{ marginBottom: '24px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '700', marginBottom: '12px', fontSize: '14px' }}>
+            <Type size={16} /> Text Size
+          </label>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {['small', 'default', 'large', 'extra-large'].map(size => (
+              <button
+                key={size}
+                id={`a11y-font-${size}`}
+                onClick={() => updateA11y('fontSize', size)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  border: '2px solid',
+                  borderColor: a11ySettings.fontSize === size ? 'var(--primary-green)' : 'var(--border-leaf)',
+                  background: a11ySettings.fontSize === size ? 'var(--primary-green)' : 'transparent',
+                  color: a11ySettings.fontSize === size ? '#fff' : 'var(--text-dark)',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  fontSize: size === 'small' ? '12px' : size === 'large' ? '16px' : size === 'extra-large' ? '18px' : '14px',
+                  transition: 'all 0.2s ease'
+                }}
+                aria-pressed={a11ySettings.fontSize === size}
+              >
+                {size.charAt(0).toUpperCase() + size.slice(1).replace('-', ' ')}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Toggles */}
+        {[
+          { key: 'highContrast',  icon: <Eye size={16} />,      label: 'High Contrast',       desc: 'Increases colour contrast using a deeper green palette. Stays on-brand.' },
+          { key: 'reduceMotion',  icon: <Zap size={16} />,      label: 'Reduce Motion',        desc: 'Disables chart transitions, Pip animations, and curve animations.' },
+          { key: 'dyslexiaFont',  icon: <BookOpen size={16} />, label: 'Dyslexia-Friendly Font', desc: 'Switches body text to OpenDyslexic with wider letter and word spacing.' },
+        ].map(({ key, icon, label, desc }) => (
+          <div
+            key={key}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px',
+              background: a11ySettings[key] ? 'rgba(74,124,89,0.07)' : '#FAF8F5',
+              borderRadius: '14px',
+              border: '1.5px solid',
+              borderColor: a11ySettings[key] ? 'var(--primary-green)' : 'var(--border-leaf)',
+              marginBottom: '12px',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '700', marginBottom: '4px' }}>
+                {icon} {label}
+              </div>
+              <p style={{ fontSize: '12px', color: '#777', margin: 0 }}>{desc}</p>
+            </div>
+            <button
+              id={`a11y-toggle-${key}`}
+              role="switch"
+              aria-checked={!!a11ySettings[key]}
+              onClick={() => updateA11y(key, !a11ySettings[key])}
+              style={{
+                width: '52px',
+                height: '28px',
+                borderRadius: '14px',
+                border: 'none',
+                background: a11ySettings[key] ? 'var(--primary-green)' : '#CBD5E0',
+                cursor: 'pointer',
+                position: 'relative',
+                flexShrink: 0,
+                transition: 'background 0.2s ease'
+              }}
+              aria-label={`${label} toggle`}
+            >
+              <span style={{
+                position: 'absolute',
+                top: '4px',
+                left: a11ySettings[key] ? '28px' : '4px',
+                width: '20px',
+                height: '20px',
+                borderRadius: '50%',
+                background: '#fff',
+                transition: 'left 0.2s ease',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.2)'
+              }} />
+            </button>
+          </div>
+        ))}
+      </div>
+
     </div>
   );
 }
-

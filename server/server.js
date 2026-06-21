@@ -141,7 +141,7 @@ function hashPassword(password) {
 
 // 1. Auth Endpoints
 app.post('/api/auth/register', (req, res) => {
-  const { username, password, name, state, city, ward, diet, commute, language } = req.body;
+  const { username, password, name, state, city, ward, diet, commute } = req.body;
 
   if (!username || !password || !name || !state || !city || !ward || !diet || !commute) {
     return res.status(400).json({ error: 'All fields are required' });
@@ -153,11 +153,10 @@ app.post('/api/auth/register', (req, res) => {
 
   try {
     const hashedPassword = hashPassword(password);
-    const userLang = language || 'en';
     const info = db.prepare(`
-      INSERT INTO users (username, password, name, state, city, ward, diet, commute, language)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(username, hashedPassword, name, state, city, ward, diet, commute, userLang);
+      INSERT INTO users (username, password, name, state, city, ward, diet, commute)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(username, hashedPassword, name, state, city, ward, diet, commute);
 
     const user = db.prepare('SELECT * FROM users WHERE id = ?').get(info.lastInsertRowid);
     res.json({ token: user.id.toString(), user });
@@ -726,9 +725,9 @@ app.post('/api/agent/feedback', requireAuth, (req, res) => {
 // 9.5 Profile Edit Endpoint
 app.patch('/api/users/profile', requireAuth, (req, res) => {
   const userId = req.user.id;
-  const { name, diet, commute, state, city, ward, language } = req.body;
+  const { name, diet, commute, state, city, ward } = req.body;
 
-  if (!name || !diet || !commute || !state || !city || !ward || !language) {
+  if (!name || !diet || !commute || !state || !city || !ward) {
     return res.status(400).json({ error: 'All profile fields are required' });
   }
 
@@ -749,9 +748,9 @@ app.patch('/api/users/profile', requireAuth, (req, res) => {
     // Update user record
     db.prepare(`
       UPDATE users
-      SET name = ?, diet = ?, commute = ?, state = ?, city = ?, ward = ?, language = ?
+      SET name = ?, diet = ?, commute = ?, state = ?, city = ?, ward = ?
       WHERE id = ?
-    `).run(name, diet, commute, state, city, ward, language, userId);
+    `).run(name, diet, commute, state, city, ward, userId);
 
     // If diet or commute changed, update the user's auto-baseline logs
     if (oldUser.diet !== diet || oldUser.commute !== commute) {

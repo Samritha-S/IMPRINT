@@ -247,33 +247,32 @@ async function runTests() {
   assert.ok(dailyLogsCount >= 0);
 
   // ====================================================================
-  // TEST 5: Profile Update - Language Field Independent
+  // TEST 5: Profile Update - Partial Update Field Isolation
   // ====================================================================
-  console.log("TEST 5: Profile Language Update...");
+  console.log("TEST 5: Profile Partial Update Field Isolation...");
   
-  const langProfileRes = await fetch('http://127.0.0.1:5002/api/users/profile', {
+  // Change only commute mode; all other fields must remain unchanged
+  const partialUpdateRes = await fetch('http://127.0.0.1:5002/api/users/profile', {
     method: 'PATCH',
     headers,
     body: JSON.stringify({
       name: 'Eco Warrior Tester',
       diet: 'vegan',
-      commute: 'walk_bicycle',
+      commute: 'public_transport',  // changed from walk_bicycle
       state: 'Maharashtra',
       city: 'Mumbai',
-      ward: 'Colaba',
-      language: 'bn'
+      ward: 'Colaba'
     })
   });
   
-  assert.strictEqual(langProfileRes.status, 200, "Should accept language update payload");
+  assert.strictEqual(partialUpdateRes.status, 200, "Should accept partial update payload");
   
-  const userRowAfterLang = db.prepare("SELECT * FROM users WHERE username = 'tester'").get();
-  assert.strictEqual(userRowAfterLang.language, 'bn', "Language should be updated");
-  assert.strictEqual(userRowAfterLang.name, 'Eco Warrior Tester', "Name should remain unchanged");
-  assert.strictEqual(userRowAfterLang.diet, 'vegan', "Diet should remain unchanged");
-  assert.strictEqual(userRowAfterLang.commute, 'walk_bicycle', "Commute should remain unchanged");
-  assert.strictEqual(userRowAfterLang.state, 'Maharashtra', "State should remain unchanged");
-  assert.strictEqual(userRowAfterLang.city, 'Mumbai', "City should remain unchanged");
-  assert.strictEqual(userRowAfterLang.ward, 'Colaba', "Ward should remain unchanged");
+  const userRowAfterPartial = db.prepare("SELECT * FROM users WHERE username = 'tester'").get();
+  assert.strictEqual(userRowAfterPartial.commute, 'public_transport', "Commute should be updated to public_transport");
+  assert.strictEqual(userRowAfterPartial.name, 'Eco Warrior Tester', "Name should remain unchanged");
+  assert.strictEqual(userRowAfterPartial.diet, 'vegan', "Diet should remain unchanged");
+  assert.strictEqual(userRowAfterPartial.state, 'Maharashtra', "State should remain unchanged");
+  assert.strictEqual(userRowAfterPartial.city, 'Mumbai', "City should remain unchanged");
+  assert.strictEqual(userRowAfterPartial.ward, 'Colaba', "Ward should remain unchanged");
 }
 
