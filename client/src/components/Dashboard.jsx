@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PipMascot from './PipMascot';
+import { useTranslation } from 'react-i18next';
 import { ArrowUp, ArrowDown, Users, Flame, Utensils, Car, Lightbulb, Check, AlertCircle } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 export default function Dashboard({ token }) {
+  const { t } = useTranslation();
   const [data, setData] = useState(null);
   const [leaderboard, setLeaderboard] = useState({ level: 'ward', list: [], note: '' });
   const [leadLevel, setLeadLevel] = useState('ward');
@@ -116,10 +118,10 @@ export default function Dashboard({ token }) {
         <YAxis />
         <Tooltip formatter={(value) => `${value} kg`} />
         <Legend />
-        <Area type="monotone" name="Food" dataKey="food" stackId="1" stroke="#E85D04" fill="url(#colorFood)" strokeWidth={2} />
-        <Area type="monotone" name="Transport" dataKey="transport" stackId="1" stroke="#4A7C59" fill="url(#colorTransport)" strokeWidth={2} />
-        <Area type="monotone" name="Electricity" dataKey="electricity" stackId="1" stroke="#8DB87A" fill="url(#colorElectricity)" strokeWidth={2} />
-        <Area type="monotone" name="Gas & Fuel" dataKey="gas" stackId="1" stroke="#8B6914" fill="url(#colorGas)" strokeWidth={2} />
+        <Area type="monotone" name={t('dashboard.chartCategories.food')} dataKey="food" stackId="1" stroke="#E85D04" fill="url(#colorFood)" strokeWidth={2} />
+        <Area type="monotone" name={t('dashboard.chartCategories.transport')} dataKey="transport" stackId="1" stroke="#4A7C59" fill="url(#colorTransport)" strokeWidth={2} />
+        <Area type="monotone" name={t('dashboard.chartCategories.electricity')} dataKey="electricity" stackId="1" stroke="#8DB87A" fill="url(#colorElectricity)" strokeWidth={2} />
+        <Area type="monotone" name={t('dashboard.chartCategories.gas')} dataKey="gas" stackId="1" stroke="#8B6914" fill="url(#colorGas)" strokeWidth={2} />
       </AreaChart>
     );
   }, [history]);
@@ -128,7 +130,7 @@ export default function Dashboard({ token }) {
     return (
       <div style={{ textAlign: 'center', padding: '40px' }}>
         <PipMascot mood="neutral" size={100} />
-        <h3>Loading your green footprint dashboard...</h3>
+        <h3>{t('dashboard.title')}</h3>
       </div>
     );
   }
@@ -154,7 +156,7 @@ export default function Dashboard({ token }) {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <PipMascot mood={data.today.mood} size={130} />
             <span style={{ fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', color: 'var(--earth-brown)', marginTop: '8px' }}>
-              Pip's Mood: {data.today.mood}
+              {t('dashboard.mascotTitle')} {data.today.mood}
             </span>
           </div>
 
@@ -179,11 +181,11 @@ export default function Dashboard({ token }) {
                 </div>
                 {actionSuccess || data.today.suggested_action.status === 'accepted' ? (
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--primary-green)', fontWeight: 'bold', fontSize: '14px' }}>
-                    <Check size={16} /> Accepted!
+                    <Check size={16} /> {t('feed.accept')}
                   </span>
                 ) : data.today.suggested_action.status === 'dismissed' ? (
                   <span style={{ color: '#D32F2F', fontWeight: 'bold', fontSize: '14px' }}>
-                    Dismissed
+                    {t('feed.dismiss')}
                   </span>
                 ) : (
                   <button 
@@ -191,7 +193,7 @@ export default function Dashboard({ token }) {
                     onClick={() => handleAcceptAction(data.today.suggested_action.action_id)}
                     style={{ padding: '6px 12px', borderRadius: '10px', fontSize: '13px' }}
                   >
-                    Accept
+                    {t('feed.accept')}
                   </button>
                 )}
               </div>
@@ -205,7 +207,7 @@ export default function Dashboard({ token }) {
         
         {/* Today's carbon imprint status */}
         <div className="leaf-card">
-          <h3>Today's Imprint</h3>
+          <h3>{t('dashboard.title')}</h3>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', margin: '15px 0' }}>
             <span style={{ fontSize: '48px', fontWeight: '900', color: 'var(--primary-green)', lineHeight: 1 }}>
               {Number(data.today.total_kg).toFixed(1)}
@@ -242,7 +244,7 @@ export default function Dashboard({ token }) {
 
         {/* Weekly breakdown */}
         <div className="leaf-card">
-          <h3>This Week at a Glance</h3>
+          <h3>{t('dashboard.weeklyGlance')}</h3>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '15px' }}>
             
@@ -253,7 +255,7 @@ export default function Dashboard({ token }) {
                   <Utensils size={18} style={{ color: '#E85D04', margin: 'auto' }} />
                 </div>
                 <div>
-                  <div style={{ fontWeight: 'bold', fontSize: '14px' }}>Food</div>
+                  <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{t('dashboard.chartCategories.food')}</div>
                   <div style={{ fontSize: '12px', color: '#777' }}>{data.week.food} kg total</div>
                 </div>
               </div>
@@ -269,7 +271,7 @@ export default function Dashboard({ token }) {
                   <Car size={18} style={{ color: '#4A7C59', margin: 'auto' }} />
                 </div>
                 <div>
-                  <div style={{ fontWeight: 'bold', fontSize: '14px' }}>Transport</div>
+                  <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{t('dashboard.chartCategories.transport')}</div>
                   <div style={{ fontSize: '12px', color: '#777' }}>{data.week.transport} kg total</div>
                 </div>
               </div>
@@ -285,7 +287,7 @@ export default function Dashboard({ token }) {
                   <Lightbulb size={18} style={{ color: '#8B6914', margin: 'auto' }} />
                 </div>
                 <div>
-                  <div style={{ fontWeight: 'bold', fontSize: '14px' }}>Energy Bills</div>
+                  <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{t('dashboard.chartCategories.electricity')}</div>
                   <div style={{ fontSize: '12px', color: '#777' }}>{data.week.energy} kg total</div>
                 </div>
               </div>
@@ -301,8 +303,8 @@ export default function Dashboard({ token }) {
 
       {/* 2.5 Habits History Stacked Area Chart */}
       <div className="leaf-card">
-        <h3>Carbon Footprint Habits (Last 30 Days)</h3>
-        <p>Analyze how your day-to-day choices impact your stacked emissions profile.</p>
+        <h3>{t('dashboard.habits')}</h3>
+        <p>{t('dashboard.habitsDesc')}</p>
         <div style={{ height: '300px', width: '100%', marginTop: '15px' }}>
           <ResponsiveContainer width="100%" height="100%">
             {chartElement}
@@ -314,8 +316,8 @@ export default function Dashboard({ token }) {
       <div className="leaf-card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
           <div>
-            <h3>Neighbourhood Pulse</h3>
-            <p style={{ margin: 0, fontSize: '14px' }}>How your carbon conservation ranks locally</p>
+            <h3>{t('dashboard.pulse')}</h3>
+            <p style={{ margin: 0, fontSize: '14px' }}>{t('dashboard.pulseDesc')}</p>
           </div>
 
           <div className="segment-bar" style={{ margin: 0 }}>
@@ -324,9 +326,9 @@ export default function Dashboard({ token }) {
                 key={lvl} 
                 className={`segment-item ${leadLevel === lvl ? 'active' : ''}`}
                 onClick={() => setLeadLevel(lvl)}
-                style={{ textTransform: 'capitalize', fontSize: '14px' }}
+                style={{ fontSize: '14px' }}
               >
-                {lvl}
+                {t(`dashboard.leaderboardLevel.${lvl}`)}
               </div>
             ))}
           </div>
@@ -342,9 +344,9 @@ export default function Dashboard({ token }) {
 
         <div style={{ marginTop: '20px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '50px 1fr 120px', padding: '10px', borderBottom: '1px solid rgba(0,0,0,0.1)', fontWeight: 'bold', fontSize: '14px', color: '#666' }}>
-            <span>Rank</span>
-            <span>Name</span>
-            <span style={{ textAlign: 'right' }}>Daily Avg</span>
+            <span>{t('dashboard.leaderboardHeaders.rank')}</span>
+            <span>{t('dashboard.leaderboardHeaders.user')}</span>
+            <span style={{ textAlign: 'right' }}>{t('dashboard.leaderboardHeaders.average')}</span>
           </div>
           {leaderboard.list.map((item, idx) => (
             <div 
