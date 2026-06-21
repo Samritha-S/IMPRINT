@@ -4,8 +4,7 @@ import { ChevronRight, ChevronLeft, MapPin, Bell, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function Onboarding({ onComplete }) {
-  const { t, i18n } = useTranslation();
-  const [language, setLanguage] = useState(i18n.language || 'en');
+  const { t } = useTranslation();
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [state, setState] = useState('');
@@ -84,8 +83,7 @@ export default function Onboarding({ onComplete }) {
           city,
           ward,
           diet,
-          commute,
-          language
+          commute
         })
       });
 
@@ -129,25 +127,6 @@ export default function Onboarding({ onComplete }) {
             <p style={{ marginBottom: '24px' }}>
               {t('onboarding.intro')}
             </p>
-
-            <div style={{ maxWidth: '280px', margin: '20px auto', textAlign: 'left' }} className="form-group">
-              <label className="form-label">{t('onboarding.selectLang')}</label>
-              <select 
-                className="form-select" 
-                value={language} 
-                onChange={e => {
-                  const val = e.target.value;
-                  setLanguage(val);
-                  i18n.changeLanguage(val);
-                }}
-              >
-                <option value="en">English</option>
-                <option value="hi">हिन्दी (Hindi)</option>
-                <option value="ta">தமிழ் (Tamil)</option>
-                <option value="te">తెలుగు (Telugu)</option>
-                <option value="bn">বাংলা (Bengali)</option>
-              </select>
-            </div>
 
             <button className="btn" onClick={handleNext} style={{ marginTop: '20px' }}>
               {t('onboarding.btnNext')} <ChevronRight size={18} />

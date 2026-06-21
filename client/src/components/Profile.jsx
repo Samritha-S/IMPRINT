@@ -22,7 +22,6 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
   const [state, setState] = useState('');
   const [city, setCity] = useState('');
   const [ward, setWard] = useState('');
-  const [language, setLanguage] = useState('en');
 
   // Dropdown lists
   const [statesList, setStatesList] = useState([]);
@@ -44,7 +43,7 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
         setName(data.user.name);
         setDiet(data.user.diet);
         setCommute(data.user.commute);
-        setLanguage(data.user.language || 'en');
+
         
         // Parsed location representation helper
         const locParts = data.user.location.split(', ');
@@ -126,7 +125,7 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ name, diet, commute, state, city, ward, language })
+        body: JSON.stringify({ name, diet, commute, state, city, ward })
       });
 
       const result = await res.json();
@@ -292,16 +291,6 @@ export default function Profile({ token, onUserUpdate, initialEdit = false, onEd
                 </select>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">{t('profile.langLabel')}</label>
-                <select className="form-select" value={language} onChange={e => setLanguage(e.target.value)}>
-                  <option value="en">English</option>
-                  <option value="hi">Hindi</option>
-                  <option value="ta">Tamil</option>
-                  <option value="te">Telugu</option>
-                  <option value="bn">Bengali</option>
-                </select>
-              </div>
             </div>
 
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
