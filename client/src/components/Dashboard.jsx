@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PipMascot from './PipMascot';
-import { ArrowUp, ArrowDown, Users, Flame, Utensils, Car, Lightbulb, Check, AlertCircle } from 'lucide-react';
+import { ArrowUp, ArrowDown, Flame, Utensils, Car, Lightbulb, Check, AlertCircle } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 export default function Dashboard({ token }) {

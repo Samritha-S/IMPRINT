@@ -3,7 +3,7 @@ import Onboarding from './components/Onboarding';
 import Feed from './components/Feed';
 import Profile from './components/Profile';
 import PipMascot from './components/PipMascot';
-import { LayoutDashboard, Camera, LineChart, FileText, User as UserIcon, LogOut, Leaf, Edit3, Settings } from 'lucide-react';
+import { LayoutDashboard, Camera, LineChart, FileText, User as UserIcon, LogOut, Leaf, Edit3 } from 'lucide-react';
 
 const Dashboard = lazy(() => import('./components/Dashboard'));
 const ScannerHub = lazy(() => import('./components/ScannerHub'));
@@ -74,6 +74,7 @@ export default function App() {
       }
       handleAuthComplete(data.token, data.user);
     } catch (err) {
+      console.error('Login submit error:', err);
       setAuthError('Connection failed.');
     }
   };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PipMascot from './PipMascot';
-import { HelpCircle, RefreshCw, Check, X, ShieldAlert, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { RefreshCw, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function Feed({ token }) {
   const [cards, setCards] = useState([]);
