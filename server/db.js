@@ -17,7 +17,6 @@ db.exec(`
     ward TEXT NOT NULL,
     diet TEXT NOT NULL,
     commute TEXT NOT NULL,
-    language TEXT DEFAULT 'en',
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
 

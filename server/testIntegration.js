@@ -208,8 +208,7 @@ async function runTests() {
       commute: 'walk_bicycle',
       state: 'Karnataka',
       city: 'Mumbai', // Invalid city for Karnataka
-      ward: 'Indiranagar',
-      language: 'en'
+      ward: 'Indiranagar'
     })
   });
   assert.strictEqual(badProfileRes.status, 400, "Should reject mismatched city/state combination");
@@ -224,8 +223,7 @@ async function runTests() {
       commute: 'walk_bicycle',
       state: 'Maharashtra',
       city: 'Mumbai',
-      ward: 'Colaba',
-      language: 'en'
+      ward: 'Colaba'
     })
   });
 

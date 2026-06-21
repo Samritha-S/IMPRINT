@@ -213,11 +213,10 @@ const tools = {
 
   /**
    * Suggests a tailored carbon mitigation action based on user history and preferences.
-   * Leverages localization templates to return recommendations in the user's preferred language.
-   * 
+   *
    * @param {number} userId - The user's database ID
    * @param {object} context - Execution context containing primary spike details or category preferences
-   * @returns {object} Action recommendation containing action_id, localized action_desc, and estimated savings
+   * @returns {object} Action recommendation containing action_id, action_desc, and estimated savings
    */
   suggestAction(userId, context = {}) {
     const lang = 'en';
