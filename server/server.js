@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const dotenv = require('dotenv');
 const db = require('./db');
 const emissionsEngine = require('./emissionsEngine');
@@ -11,8 +12,24 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({ origin: 'http://localhost:3000' }));
+// Allow localhost (dev) and the Cloud Run origin (prod, set via CORS_ORIGIN env var)
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:5000'];
+if (process.env.CORS_ORIGIN) allowedOrigins.push(process.env.CORS_ORIGIN);
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. same-origin, curl) or matched origins
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
+
+// Serve pre-built React client (production only)
+const STATIC_DIR = path.join(__dirname, 'public');
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(STATIC_DIR));
+}
 
 // Location static lookup data for endpoints
 const LOCATIONS_DATA = {
@@ -879,8 +896,15 @@ app.get('/api/profile', requireAuth, (req, res) => {
   }
 });
 
+// SPA fallback: serve index.html for any non-API route in production
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(STATIC_DIR, 'index.html'));
+  });
+}
+
 if (require.main === module) {
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`Imprint server listening on port ${PORT}`);
   });
 }
