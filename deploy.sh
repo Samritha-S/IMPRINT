@@ -15,10 +15,11 @@
 set -euo pipefail
 
 # ── CONFIGURATION ─────────────────────────────────────────
-PROJECT_ID="${GCP_PROJECT_ID:-}"          # set via env or edit below
+PROJECT_ID="${GCP_PROJECT_ID:-project-1ed2d1a2-766d-4154-88a}"
 REGION="${GCP_REGION:-asia-south1}"       # Mumbai region — closest to target users
+AR_REPO="imprint-docker"
 SERVICE_NAME="imprint"
-IMAGE_NAME="gcr.io/${PROJECT_ID}/${SERVICE_NAME}"
+IMAGE_NAME="${REGION}-docker.pkg.dev/${PROJECT_ID}/${AR_REPO}/${SERVICE_NAME}"
 ANTHROPIC_API_KEY_VALUE="${ANTHROPIC_API_KEY:-}"
 
 # ── VALIDATION ────────────────────────────────────────────
@@ -43,9 +44,19 @@ echo "⚙️   Enabling GCP APIs..."
 gcloud services enable \
   cloudbuild.googleapis.com \
   run.googleapis.com \
-  containerregistry.googleapis.com \
+  artifactregistry.googleapis.com \
   --project="$PROJECT_ID" \
   --quiet
+
+# Create Artifact Registry repo if it doesn't exist
+if ! gcloud artifacts repositories describe "$AR_REPO" --location="$REGION" --project="$PROJECT_ID" --quiet &>/dev/null; then
+  echo "📦  Creating Artifact Registry repository..."
+  gcloud artifacts repositories create "$AR_REPO" \
+    --repository-format=docker \
+    --location="$REGION" \
+    --project="$PROJECT_ID" \
+    --quiet
+fi
 
 # ── STEP 2: Build & push with Cloud Build (no local Docker needed) ───────────
 echo ""
