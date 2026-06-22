@@ -19,8 +19,10 @@ if (process.env.CORS_ORIGIN) allowedOrigins.push(process.env.CORS_ORIGIN);
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (e.g. same-origin, curl) or matched origins
-    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error('Not allowed by CORS'));
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.run.app')) {
+      return callback(null, true);
+    }
+    callback(null, false);
   },
   credentials: true
 }));
